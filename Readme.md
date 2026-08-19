@@ -1,4 +1,4 @@
-# 🚀 INSTULEARN UI TEST OTOMASYON PROJESİ (Playwright)
+# 🚀 INSTULEARN UI TEST OTOMASYON PROJESİ (Playwright + Cucumber BDD)
 
 > *"Quality at the Speed of Light"* ⚡
 
@@ -8,244 +8,59 @@
 
 ## 📖 Proje Hakkında
 
-Bu proje, **Instulearn** platformunun kalitesini garanti altına almak için geliştirilmiş, **Playwright** tabanlı modern bir **UI Test Otomasyon Framework'üdür**.
+Bu proje, **Instulearn** platformunun test süreçlerini otomatize etmek için **Playwright**, **TypeScript** ve **Cucumber (BDD)** kullanılarak geliştirilmiş modern bir UI Test Otomasyon Framework'üdür.
 
-- **Teknoloji Stack'i:** Playwright + TypeScript
-- **Yaklaşım:** BDD (Cucumber) entegrasyonu ile geliştirilebilir
-- **Mimari:** Page Object Model (POM) + Reusable Methods
+- **Teknoloji Stack'i:** Playwright + TypeScript + Cucumber BDD
+- **Test Yaklaşımı:** Behavior Driven Development (Gherkin Syntax)
+- **Mimari:** Page Object Model (POM) + Reusable Utilities + Profile-based Runners
 
 ---
 
-## 🎯 Hedefler
+## 🎯 Hedefler & Özellikler
 
-| Hedef | Açıklama |
+| Özellik | Açıklama |
 | :--- | :--- |
-| ✅ **Hız ve Performans** | Paralel test çalıştırma ile hızlı geri bildirim |
-| ✅ **Çoklu Tarayıcı** | Chromium, Firefox, WebKit (Safari) desteği |
-| ✅ **Gelişmiş Raporlama** | Allure / HTML raporları ile detaylı analiz |
-| ✅ **Tip Güvenliği** | TypeScript ile daha sağlam ve hatasız kod |
-| ✅ **CI/CD Entegrasyonu** | GitHub Actions ile otomatik test süreçleri |
-| ✅ **Modülerlik** | Bakımı kolay, tekrar kullanılabilir kod yapısı |
+| ✅ **BDD Entegrasyonu** | Cucumber (Gherkin syntax) ile okunabilir ve modüler test senaryoları |
+| ✅ **Sayfa Nesne Modeli (POM)** | `BasePage` ve özel sayfa sınıfları ile sürdürülebilir kod mimarisi |
+| ✅ **Güvenli Konfigürasyon** | `.env` desteği ile hassas verilerin (URL, kullanıcı bilgileri) güvenli yönetimi |
+| ✅ **Runner & Profil Yönetimi** | `@smoke` ve `@regression` etiketleriyle hedefe yönelik test koşumları |
+| ✅ **Görsel Takip & Loglama** | `highlight` destekli özel tıklama/yazma yardımcıları ve otomatik ekran görüntüsü |
+| ✅ **Gelişmiş Raporlama** | Test koşumu sonunda otomatik üretilen Cucumber HTML raporları |
 
 ---
 
 ## 🛠️ Teknolojiler ve Araçlar
 
 ### 🏗️ Temel Yapı
-- **TypeScript:** Tip güvenli JavaScript
-- **Playwright:** Modern end-to-end test framework
-- **Node.js:** Runtime ortamı
-
-### 📊 Raporlama & Loglama
-- **Allure Reports:** Gelişmiş görsel raporlar
-- **Playwright HTML Report:** Hızlı ve detaylı raporlama
-- **Trace Viewer:** Test adımlarını izleme
+- **TypeScript:** Tip güvenli dil desteği
+- **Playwright:** Modern browser otomasyon kütüphanesi
+- **Cucumber.js:** BDD test runner
+- **ts-node:** TypeScript execution ortamı
 
 ### 🧪 Yardımcı Araçlar
-- **dotenv:** Çevresel değişken yönetimi
-- **Cucumber (opsiyonel):** BDD tabanlı test senaryoları
-- **Page Object Model:** Sayfa organizasyonu
+- **dotenv:** Çevresel değişken yönetimi (`.env`)
+- **Cucumber HTML Reporter:** Test sonuç raporlaması
 
 ---
 
 ## 📁 Proje Yapısı
 
 ```text
-js-ui-project_basic/
-├── src/                       # (opsiyonel) Kaynak kodlar
+ts-cucumber-ui/
+├── features/                  # Gherkin (.feature) senaryo dosyaları
+│   └── US001VerifyTitle.feature
+├── step-definitions/          # Step definition ve Hook tanımlamaları
+│   ├── US001Steps.ts
+│   └── hooks.ts
 ├── pages/                     # Page Object Model sınıfları
-│   ├── LoginPage.ts
-│   ├── HomePage.ts
-│   └── PanelPage.ts
-├── tests/                     # Playwright test dosyaları
-│   ├── login.spec.ts
-│   └── homepage.spec.ts
-├── utils/                     # Reusable Methods ve yardımcılar
-│   ├── ReusableMethods.ts
-│   ├── helpers.ts
-│   └── dataGenerator.ts
-├── fixtures/                  # (opsiyonel) Custom fixtures
-│   └── customFixtures.ts
-├── playwright-report/         # Test raporları
-├── test-results/              # Test sonuçları
-├── screenshots/               # Hata durumu ekran görüntüleri
-├── allure-results/            # Allure rapor çıktıları
-├── .env                       # Çevresel değişkenler (gitignore)
-├── .gitignore
-├── package.json
-├── playwright.config.ts       # Playwright konfigürasyonu
-├── tsconfig.json              # TypeScript konfigürasyonu
+│   ├── BasePage.ts            # Ortak utility ve browser aksiyonları
+│   └── HomePage.ts            # Ana sayfa locator ve metodları
+├── utils/                     # Konfigürasyon ve okuyucular
+│   └── config.ts              # .env değişken okuyucusu
+├── reports/                   # Test koşum raporları (HTML)
+├── .env                       # Çevresel değişkenler (gitignore dahil)
+├── .gitignore                 # Git tarafından izlenmeyecek dosyalar
+├── cucumber.json              # Cucumber profil ve runner ayarları
+├── package.json               # Bağımlılıklar ve npm script'leri
+├── tsconfig.json              # TypeScript derleyici ayarları
 └── README.md                  # Proje dokümantasyonu
-🚀 Başlangıç
-Projeyi Klonlayın:
-
-bash
-git clone [repository-url]
-cd js-ui-project_basic
-Bağımlılıkları Yükleyin:
-
-bash
-npm install
-Playwright Tarayıcılarını Yükleyin:
-
-bash
-npx playwright install
-Çevresel Değişkenleri Ayarlayın:
-.env dosyası oluşturun ve gerekli bilgileri ekleyin:
-
-env
-BASE_URL=https://qa.instulearn.com/
-TEST_USERNAME=your-email@instuLearn.com
-TEST_PASSWORD=your-password
-🧪 Testleri Çalıştırma
-Komut	Açıklama
-npm test	Tüm testleri çalıştır
-npm run test:headed	Tarayıcı açık (görünür) modda çalıştır
-npm run test:debug	Debug modunda çalıştır
-npm run test:chromium	Sadece Chromium'da çalıştır
-npm run test:single tests/login.spec.ts	Tek bir test dosyasını çalıştır
-📊 Raporları Görüntüleme
-bash
-# Playwright HTML Raporu
-npx playwright show-report
-
-# Allure Raporu
-npx allure generate allure-results --clean
-npx allure open
-📝 Örnek Kullanım
-Test Dosyası (.spec.ts)
-typescript
-// tests/login.spec.ts
-import { test, expect } from '@playwright/test';
-import { ReusableMethods } from '../utils/ReusableMethods';
-import { LoginPage } from '../pages/LoginPage';
-
-test('Başarılı giriş testi', async ({ page }) => {
-    const methods = new ReusableMethods(page);
-    const loginPage = new LoginPage(page);
-
-    await loginPage.goto();
-    await loginPage.login('test@instuLearn.com', 'Test.123!');
-
-    await methods.verifyUrl('/panel');
-    await expect(page).toHaveURL(/.*panel/);
-});
-Page Object Model (.ts)
-typescript
-// pages/LoginPage.ts
-import { Page, Locator } from '@playwright/test';
-
-export class LoginPage {
-    readonly page: Page;
-    readonly emailInput: Locator;
-    readonly passwordInput: Locator;
-    readonly loginButton: Locator;
-
-    constructor(page: Page) {
-        this.page = page;
-        this.emailInput = page.getByRole('textbox', { name: 'Email:' });
-        this.passwordInput = page.getByRole('textbox', { name: 'Password:' });
-        this.loginButton = page.getByRole('button', { name: 'Login' });
-    }
-
-    async goto() {
-        await this.page.goto('https://qa.instulearn.com/');
-        await this.page.getByRole('link', { name: 'Login' }).click();
-    }
-
-    async login(email: string, password: string) {
-        await this.emailInput.fill(email);
-        await this.passwordInput.fill(password);
-        await this.loginButton.click();
-    }
-}
-Reusable Methods (.ts)
-typescript
-// utils/ReusableMethods.ts
-import { Page, Locator, expect } from '@playwright/test';
-
-export class ReusableMethods {
-    constructor(private page: Page) {}
-
-    async verifyButton(selector: string | Locator) {
-        const button = typeof selector === 'string'
-            ? this.page.locator(selector)
-            : selector;
-        await expect(button).toBeVisible();
-        await expect(button).toBeEnabled();
-    }
-
-    async verifyUrl(expectedUrlPart: string | RegExp) {
-        const regex = typeof expectedUrlPart === 'string'
-            ? new RegExp(expectedUrlPart)
-            : expectedUrlPart;
-        await expect(this.page).toHaveURL(regex);
-    }
-}
-🔧 Playwright Konfigürasyonu
-typescript
-// playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
-
-export default defineConfig({
-    testDir: './tests',
-    fullyParallel: true,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
-    reporter: [
-        ['html'],
-        ['allure-playwright']
-    ],
-    use: {
-        baseURL: 'https://qa.instulearn.com/',
-        trace: 'on-first-retry',
-        screenshot: 'only-on-failure',
-        video: 'retain-on-failure',
-    },
-    projects: [
-        {
-            name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
-        },
-        // {
-        //   name: 'firefox',
-        //   use: { ...devices['Desktop Firefox'] },
-        // },
-        // {
-        //   name: 'webkit',
-        //   use: { ...devices['Desktop Safari'] },
-        // },
-    ],
-});
-📊 Raporlama
-Test sonuçlarını görüntülemek için:
-
-Rapor Türü	Komut
-Playwright HTML	npx playwright show-report
-Allure	npx allure open
-Trace Viewer	npx playwright show-trace trace.zip
-🤝 Takım İçi Kurallar
-Branch Stratejisi: main (kararlı) → develop (geliştirme) → feature/gorev-adi
-
-Commit Mesajları: feat:, fix:, docs:, test: prefixleri kullanılmalıdır.
-
-Code Review: Her Pull Request en az bir ekip üyesi tarafından incelenmelidir.
-
-TypeScript: Tüm yeni dosyalar .ts uzantısıyla oluşturulmalıdır.
-
-📞 İletişim & Linkler
-QA Environment: qa.instulearn.com
-
-Playwright Dokümantasyonu: playwright.dev
-
-Issues: Hataları bildirmek için GitHub Issues sekmesini kullanın.
-
-📜 Lisans
-Bu proje Instulearn Team 167 tarafından geliştirilmektedir. Tüm hakları saklıdır.
-
-⭐ Başarılı testler dileriz!
-
-text
-
----
