@@ -28,5 +28,5 @@ yarn-error.log*
 /Documents/
 
 ###allure-report###
-allure-report/
 allure-results/
+allure-report/
