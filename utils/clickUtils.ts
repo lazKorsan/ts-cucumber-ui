@@ -507,6 +507,16 @@ export class ClickUtils {
         }
     }
 
+    static async click(page: Page, selector: string, options?: ClickOptions): Promise<boolean> {
+        const instance = new ClickUtils(page);
+        return instance.click(selector, options);
+    }
+
+    static async clickOnLocator(page: Page, locator: Locator, options?: ClickOptions): Promise<boolean> {
+        const instance = new ClickUtils(page);
+        return instance.clickOnLocator(locator, options);
+    }
+
     private log(message: string): void {
         console.log(`[ClickUtils] ${message}`);
     }
@@ -529,3 +539,4 @@ export interface ClickOptions {
 export async function createClickUtils(page: Page): Promise<ClickUtils> {
     return new ClickUtils(page);
 }
+

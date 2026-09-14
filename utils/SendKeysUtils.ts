@@ -662,6 +662,16 @@ export class SendKeysUtils {
         }
     }
 
+    static async sendKeys(page: Page, selector: string, text: string, options?: SendKeysOptions): Promise<boolean> {
+        const instance = new SendKeysUtils(page);
+        return instance.sendKeys(selector, text, options);
+    }
+
+    static async sendKeysOnLocator(page: Page, locator: Locator, text: string, options?: SendKeysOptions): Promise<boolean> {
+        const instance = new SendKeysUtils(page);
+        return instance.sendKeysOnLocator(locator, text, options);
+    }
+
     // ============================================
     // YARDIMCI METHODLAR
     // ============================================
