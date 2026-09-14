@@ -1,21 +1,58 @@
-import { Given, When } from '@cucumber/cucumber';
-import { expect } from '@playwright/test';
-import { page } from './hooks';
-import { HomePage } from '../pages/HomePage';
-import { Config } from '../utils/config';
+import {Given, When, Then} from '@cucumber/cucumber';
+import {expect} from '@playwright/test';
 
-let homePage: HomePage;
+import {HomePage} from '../pages/HomePage';
+import {Config} from '../utils/config';
+import ReasubleMethods from "../utils/ReasubleMethods";
+
 
 Given('Student kullanicisi anaSayfaya gider', async function () {
-    homePage = new HomePage(page);
+
+    const homePage = new HomePage(this.page);
     await homePage.navigateTo(Config.baseUrl);
 });
 
 Given('Student kullanicisi url dogrular', async function () {
-    await expect(page).toHaveURL(Config.baseUrl);
+
+    await expect(this.page).toHaveURL(Config.baseUrl);
 });
 
 When('Student kullanicisi title ın {string} oldugunu dogrular', async function (expectedTitle: string) {
+    // 3. homePage nesnesini this.page ile ilklendiriyoruz
+    const homePage = new HomePage(this.page);
     const actualTitle = await homePage.getTitle();
+
     expect(actualTitle).toBe(expectedTitle);
+});
+
+
+Given(/^Student kullanicisi "([^"]*)" buttona tiklar$/, async function (buttonName: string) {
+
+    const homePage = new HomePage(this.page);
+    await homePage.getElementByName(buttonName).click()
+});
+
+
+Given(/^Student kullanicisi "([^"]*)" sayfasinda oldugunu dogrular$/, async function (expectedUrl: string) {
+
+
+    // 2. verifyUrl doğrudan çağıralım
+    await ReasubleMethods.verifyUrl(this.page, expectedUrl);
+});
+
+
+Given(/^Student kullanicisi "([^"]*)" kutusuna "([^"]*)" yazar$/, async function (elementName: string, envKey: string) {
+
+
+    const homePage = new HomePage(this.page);
+
+    // 1. .env dosyasından değeri çek, eğer .env içinde yoksa doğrudan tırnak içindeki değeri kullan
+    const valueToFill = process.env[envKey] || envKey;
+
+    if (!process.env[envKey]) {
+        console.warn(`[UYARI] '${envKey}' anahtarı .env dosyasında bulunamadı, doğrudan metin olarak yazılıyor: "${envKey}"`);
+    }
+
+    // 2. Enum üzerinden ilgili kutuyu bul ve değeri yaz
+    await homePage.getBoxByName(elementName).fill(valueToFill);
 });
