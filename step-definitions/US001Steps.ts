@@ -4,6 +4,8 @@ import {expect} from '@playwright/test';
 import {HomePage} from '../pages/HomePage';
 import {Config} from '../utils/config';
 import ReasubleMethods from "../utils/ReasubleMethods";
+import {ClickUtils, createClickUtils} from "../utils/clickUtils";
+import {SendKeysUtils} from "../utils/SendKeysUtils";
 
 
 Given('Student kullanicisi anaSayfaya gider', async function () {
@@ -55,4 +57,27 @@ Given(/^Student kullanicisi "([^"]*)" kutusuna "([^"]*)" yazar$/, async function
 
     // 2. Enum üzerinden ilgili kutuyu bul ve değeri yaz
     await homePage.getBoxByName(elementName).fill(valueToFill);
+});
+Given(/^Student kullanicisi clickUtils methodu ile "([^"]*)" buttona tiklar$/, async function (buttonName: string) {
+
+
+    const homePage = new HomePage(this.page);
+
+    // 1. Enum'dan Locator'ı çek
+    const locator = homePage.getElementByName(buttonName);
+
+    // 2. ClickUtils'in tüm akıllı özellikleriyle (scroll, hover, highlight, 8 aşamalı fallback) tıkla
+    await ClickUtils.clickOnLocator(this.page, locator);
+
+
+});
+Given(/^Student kullanicisi sendKeys methodu ile "([^"]*)" baox kutusuna "([^"]*)" yazar$/, async function (elementName: string, envKey: string) {
+
+    const homePage = new HomePage(this.page);
+    const locator = homePage.getBoxByName(elementName);
+
+    const valueToFill = process.env[envKey] || envKey;
+
+    await SendKeysUtils.sendKeysOnLocator(this.page, locator, valueToFill);
+
 });

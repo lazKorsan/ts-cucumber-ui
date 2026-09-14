@@ -7,7 +7,8 @@ export enum HomePageElements {
     REGISTER_BUTTON = '//a[@href="/register" and normalize-space(text())="Register"]',
     EMAIL_BOX='//input[@id="email"]',
     PASSWORD_BOX='//input[@id="password"]',
-    SUBMIT_BUTTON='//*[@id="app"]/div[3]/div/div[2]/div/form/button'
+    SUBMIT_BUTTON='//*[@id="app"]/div[3]/div/div[2]/div/form/button',
+    COURSES_BUTTON='//a[@href="/classes?sort=newest"]'
 }
 
 export enum HomePageBox {
