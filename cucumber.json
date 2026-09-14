@@ -3,20 +3,41 @@
     "paths": ["features/**/*.feature"],
     "require": ["step-definitions/**/*.ts"],
     "requireModule": ["ts-node/register"],
-    "format": ["progress", "html:reports/cucumber-report.html"]
+    "format": [
+      "progress",
+      "html:reports/cucumber-report.html",
+      "allure-cucumberjs/reporter"
+    ],
+    "formatOptions": {
+      "resultsDir": "allure-results"
+    }
   },
   "smoke": {
     "paths": ["features/**/*.feature"],
     "require": ["step-definitions/**/*.ts"],
     "requireModule": ["ts-node/register"],
     "tags": "@smoke",
-    "format": ["progress", "html:reports/smoke-report.html"]
+    "format": [
+      "progress",
+      "html:reports/smoke-report.html",
+      "allure-cucumberjs/reporter"
+    ],
+    "formatOptions": {
+      "resultsDir": "allure-results"
+    }
   },
   "regression": {
     "paths": ["features/**/*.feature"],
     "require": ["step-definitions/**/*.ts"],
     "requireModule": ["ts-node/register"],
     "tags": "@regression",
-    "format": ["progress", "html:reports/regression-report.html"]
+    "format": [
+      "progress",
+      "html:reports/regression-report.html",
+      "allure-cucumberjs/reporter"
+    ],
+    "formatOptions": {
+      "resultsDir": "allure-results"
+    }
   }
 }

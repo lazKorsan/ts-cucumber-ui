@@ -1,0 +1,6 @@
+"DESCRİPTİON","DURATİON İN MS","NAME","PARENT SUİTE","START TİME","STATUS","STOP TİME","SUB SUİTE","SUİTE","TEST CLASS","TEST METHOD"
+"","4095","Siteye girerken title'ın ' Home | InstuLearn ' olduğundan emin olunmalıdır.","","2026-09-14","passed","2026-09-14","","","",""
+"","33390","ClickUtils methodunun projeye dahil edilmesi","","2026-09-14","broken","2026-09-14","","","",""
+"","3361","enum list kullanimi","","2026-09-14","passed","2026-09-14","","","",""
+"","33310","SendKeyUtils Methodunun projeye dahil edilmesi","","2026-09-14","broken","2026-09-14","","","",""
+"","4147","Student kullanicisi dogrulanmis hesap ile siteye giris yapar","","2026-09-14","passed","2026-09-14","","","",""
