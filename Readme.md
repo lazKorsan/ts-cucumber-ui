@@ -64,3 +64,9 @@ ts-cucumber-ui/
 ├── package.json               # Bağımlılıklar ve npm script'leri
 ├── tsconfig.json              # TypeScript derleyici ayarları
 └── README.md                  # Proje dokümantasyonu
+
+## allure Report almak icin geekli komutlar
+'''
+npx allure-commandline generate allure-results --clean -o allure-report
+npx allure-commandline open allure-report
+'''
