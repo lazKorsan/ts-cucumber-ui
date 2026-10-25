@@ -50,7 +50,7 @@ ts-cucumber-ui/
 ├── features/                  # Gherkin (.feature) senaryo dosyaları
 │   └── US001VerifyTitle.feature
 ├── step-definitions/          # Step definition ve Hook tanımlamaları
-│   ├── US001Steps.ts
+│   ├── StudentSteps.ts
 │   └── hooks.ts
 ├── pages/                     # Page Object Model sınıfları
 │   ├── BasePage.ts            # Ortak utility ve browser aksiyonları
