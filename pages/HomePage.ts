@@ -8,7 +8,13 @@ export enum HomePageElements {
     EMAIL_BOX='//input[@id="email"]',
     PASSWORD_BOX='//input[@id="password"]',
     SUBMIT_BUTTON='//*[@id="app"]/div[3]/div/div[2]/div/form/button',
-    COURSES_BUTTON='//a[@href="/classes?sort=newest"]'
+    COURSES_BUTTON='//a[text()=\'Courses\']',
+    INSTRUCTORS_BUTTON='//a[text()=\'Instructors\']', //INSTRUCTORS
+    CATEGORIES_BUTTON='//li[contains(@class, \'xs-categories-toggle\')]', // CATEGORIES
+    STORE_BUTTON='//a[text()=\'Store\']',
+    BLOG_BUTTON='//a[text()=\'Blog\']',
+    HOME_BUTTON='//a[text()=\'Home\']',
+
 }
 
 export enum HomePageBox {
@@ -68,6 +74,8 @@ export class HomePage extends BasePage {
         // constructor çalıştıktan sonra bu metod çağrıldığı için this.page artık hazır!
         return this.page.locator(selector);
     }
+
+
 
 
 }

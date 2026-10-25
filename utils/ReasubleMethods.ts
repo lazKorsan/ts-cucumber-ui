@@ -1,4 +1,6 @@
 import { Page, expect } from '@playwright/test';
+import {HomePage} from "../pages/HomePage";
+
 
 enum ConsoleColors {
     Blue = '\x1b[34m',
@@ -55,7 +57,7 @@ class ReasubleMethods {
     /**
      * Bilgi logu
      */
-    private logInfo(message: string): void {
+    public (message: string): void {
         console.log(`${ConsoleColors.Cyan}ℹ️ ${message}${ConsoleColors.Reset}`);
     }
 
@@ -70,10 +72,42 @@ class ReasubleMethods {
         await expect(page).toHaveURL(regex, { timeout });
     }
 
+    static async wait(page: Page, seconds: number): Promise<void> {
+        if (!page) {
+            throw new Error("[HATA] ReasubleMethods.wait metoduna 'page' nesnesi gönderilmedi!");
+        }
+
+        // this.logInfo ve logSuccess metotları da static olduğu için bu şekilde logları da açabilirsiniz:
+        //this.logInfo(`${seconds} saniye bekleniyor...`);
+
+        // page: Page yapınca waitForTimeout hata vermeyi bırakacaktır
+        await page.waitForTimeout(seconds * 1000);
+
+        //this.logSuccess(`${seconds} saniyelik bekleme tamamlandı.`);
+    }
+
+    static logInfo(message: string): void {
+        console.log(`[INFO] [${new Date().toISOString()}] - ${message}`);
+    }
+
+    /**
+     * Hata logu basar
+     */
+    static logError(message: string, error?: any): void {
+        console.error(`[ERROR] [${new Date().toISOString()}] - ${message}`, error ?? '');
+    }
+
+    /**
+     * Uyarı logu basar
+     */
+    static logWarn(message: string): void {
+        console.warn(`[WARN] [${new Date().toISOString()}] - ${message}`);
+    }
+
 }
 
 export default ReasubleMethods
 
 
-
-
+export class logInfo {
+}

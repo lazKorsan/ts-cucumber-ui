@@ -6,6 +6,11 @@ import {Config} from '../utils/config';
 import ReasubleMethods from "../utils/ReasubleMethods";
 import {ClickUtils, createClickUtils} from "../utils/clickUtils";
 import {SendKeysUtils} from "../utils/SendKeysUtils";
+import {LoggerHelper} from "../utils/LoggerHelper";
+import {VerifyElements} from "../utils/VerifyElements";
+
+
+
 
 
 Given('Student kullanicisi anaSayfaya gider', async function () {
@@ -32,6 +37,7 @@ Given(/^Student kullanicisi "([^"]*)" buttona tiklar$/, async function (buttonNa
 
     const homePage = new HomePage(this.page);
     await homePage.getElementByName(buttonName).click()
+    LoggerHelper.logInfo(`Student kullanıcısı "${buttonName}" butonuna tıkladı.`);
 });
 
 
@@ -79,5 +85,30 @@ Given(/^Student kullanicisi sendKeys methodu ile "([^"]*)" baox kutusuna "([^"]*
     const valueToFill = process.env[envKey] || envKey;
 
     await SendKeysUtils.sendKeysOnLocator(this.page, locator, valueToFill);
+
+});
+
+
+Given(/^Student kullanicisi bekle (\d+) saniye$/, async function (saniye: number) {
+
+    await ReasubleMethods.wait(this.page, saniye);
+
+});
+
+
+Given(/^Student kullanicisi "([^"]*)" butonunun aktif olduğunu doğrular$/, async function (elementName: string) {
+
+    const homePage = new HomePage(this.page);
+
+    // 2. Enum key dönüşümü yaparak ilgili Locator'ı alıyoruz
+    const buttonLocator = homePage.getElementByName(elementName);
+
+    // 3. Playwright uyumlu VerifyElements sınıfıyla doğruluyoruz
+    const isVerified = await VerifyElements.verifyButton(buttonLocator, elementName);
+
+    // 4. Testin Cucumber raporunda patlaması için assertion kontrolü
+    if (!isVerified) {
+        throw new Error(`[TEST FAILED] '${elementName}' butonunun aktif olduğu doğrulanamadı!`);
+    }
 
 });
