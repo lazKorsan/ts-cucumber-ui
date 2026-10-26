@@ -1,5 +1,5 @@
 Feature: Bir kullanici olarak site ana sayfasina erisim saglayabilmek istiyorum.
-  @smoke
+  @StudentVerifyTitle
   Scenario: Siteye girerken title'ın ' Home | InstuLearn ' olduğundan emin olunmalıdır.
     * Student kullanicisi anaSayfaya gider
     * Student kullanicisi url dogrular

@@ -56,10 +56,7 @@ export class ClickUtils {
             // 6. 8 Aşamalı Tıklama
             const clicked = await this.performClickWithFallback(element, opts);
 
-            // 7. Highlight'ı kaldır
-            if (opts.highlight) {
-                await this.unhighlightElement(element);
-            }
+
 
             if (clicked) {
                 this.log(`✅ ELEMENT TIKLANDI: "${selector}"`);
@@ -101,6 +98,15 @@ export class ClickUtils {
     }
 
     /**
+     * 📛 `name` attribute'una göre tıkla
+     */
+    async clickByName(name: string, options?: ClickOptions): Promise<boolean> {
+        this.log(`📛 Name attribute ile element aranıyor: "${name}"`);
+        // Playwright'ta CSS selector olarak [name="..."] kullanmak en garantisidir
+        return this.click(`[name="${name}"]`, options);
+    }
+
+    /**
      * 🔘 Role'e göre tıkla (button, link, radio, checkbox vb.)
      */
     async clickByRole(role: string, name?: string, options?: ClickOptions): Promise<boolean> {
@@ -130,9 +136,9 @@ export class ClickUtils {
 
             const clicked = await this.performClickWithFallback(locator, opts);
 
-            if (opts.highlight) {
-                await this.unhighlightElement(locator);
-            }
+            // if (opts.highlight) {
+            //                 await this.unhighlightElement(locator);
+            //             }
 
             if (clicked) {
                 this.log(`✅ LOCATOR TIKLANDI`);
@@ -144,6 +150,88 @@ export class ClickUtils {
             this.log(`❌ HATA: ${error.message}`);
             return false;
         }
+    }
+
+    /**
+     * 🧠 Akıllı Tıklama: Verilen değeri Name, ID, CSS veya Text olarak sırayla dener.
+     * Java'daki 'ClickUtils.clickByName' metodunun Playwright versiyonu.
+     */
+    async clickSmart(identifier: string, options?: ClickOptions): Promise<boolean> {
+        this.log(`🧠 Akıllı arama başlatıldı: "${identifier}"`);
+
+        // 1. Önce name attribute'u olarak dene
+        const nameLocator = this.page.locator(`[name="${identifier}"]`);
+        if (await nameLocator.count() > 0) {
+            this.log(`   ✓ Element "name" attribute'u ile bulundu.`);
+            return this.clickOnLocator(nameLocator, options);
+        }
+
+        // 2. ID olarak dene
+        const idLocator = this.page.locator(`#${identifier}`);
+        if (await idLocator.count() > 0) {
+            this.log(`   ✓ Element "ID" ile bulundu.`);
+            return this.clickOnLocator(idLocator, options);
+        }
+
+        // 3. Text (metin) olarak dene (Butonlar için çok işe yarar)
+        const textLocator = this.page.getByText(identifier, { exact: true });
+        if (await textLocator.count() > 0) {
+            this.log(`   ✓ Element "Metin" ile bulundu.`);
+            return this.clickOnLocator(textLocator, options);
+        }
+
+        // 4. Son çare: Direkt CSS Selector olarak dene
+        this.log(`   ⚠️ Element name, ID veya text ile bulunamadı. CSS Selector olarak deneniyor...`);
+        return this.click(identifier, options);
+    }
+    /**
+     * 🧠 Akıllı Tıklama (Java'daki smartClick'in Playwright Versiyonu)
+     *
+     * Önce Page Object'in kendi içindeki element bulma metodunu (örn: HeaderPage.getHeaderElement) dener.
+     * Eğer o element listede yoksa veya hata verirse, doğrudan Text ile aramaya düşer.
+     *
+     * @param buttonName - Feature dosyasından gelen element adı (örn: "Login", "Categories")
+     * @param elementSupplier - Page objesinden elementi alan fonksiyon (örn: () => headerPage.getHeaderElement(buttonName))
+     * @param options - Opsiyonel tıklama ayarları
+     */
+    async smartClick(
+        buttonName: string,
+        elementSupplier: () => Locator,
+        options?: ClickOptions
+    ): Promise<boolean> {
+
+        // 1. AŞAMA: Enum/Page Object listesinden bulmayı dene
+        try {
+            const locator = elementSupplier();
+            if (locator) {
+                this.log(`🎯 Element listede (Page/Enum) tanımlı bulundu: "${buttonName}"`);
+                return await this.clickOnLocator(locator, options);
+            }
+        } catch (error: any) {
+            this.log(`⚠️ Element listede bulunamadı veya hata oluştu: ${error.message?.substring(0, 100)}`);
+            this.log(`🔍 Fallback: Doğrudan text ile aranıyor...`);
+        }
+
+        // 2. AŞAMA: Listede yoksa Text ile aramaya düş (Fallback)
+        const textClicked = await this.clickByText(buttonName, options);
+
+        if (textClicked) {
+            this.log(`✅ Fallback başarılı: "${buttonName}" metni ile tıklandı.`);
+        } else {
+            this.log(`❌ Fallback da başarısız: "${buttonName}" hiçbir şekilde bulunamadı.`);
+        }
+
+        return textClicked;
+    }
+
+    static async smartClick(
+        page: Page,
+        buttonName: string,
+        elementSupplier: () => Locator,
+        options?: ClickOptions
+    ): Promise<boolean> {
+        const instance = new ClickUtils(page);
+        return instance.smartClick(buttonName, elementSupplier, options);
     }
 
     // ============================================
@@ -353,55 +441,47 @@ export class ClickUtils {
     // ============================================
 
     private async performClickWithFallback(locator: Locator, options: ClickOptions): Promise<boolean> {
-        const selector = await this.getSelectorFromLocator(locator);
+        // const selector = ... satırını silebilirsin, artık locator.evaluate kullanacağız.
 
         const methods = [
             { name: 'Normal Click', fn: () => locator.click({ timeout: options.timeout }) },
             { name: 'Force Click', fn: () => locator.click({ force: true, timeout: options.timeout }) },
             { name: 'Position Click', fn: () => locator.click({ position: { x: 5, y: 5 }, timeout: options.timeout }) },
-            { name: 'JavaScript Click', fn: () => this.page.evaluate((sel) => {
-                    const el = document.querySelector(sel) as HTMLElement;
-                    if (el) {
-                        el.click();
-                        el.dispatchEvent(new Event('click', { bubbles: true }));
-                        return true;
-                    }
-                    return false;
-                }, selector) },
-            { name: 'Dispatch Click', fn: () => this.page.evaluate((sel) => {
-                    const el = document.querySelector(sel);
-                    if (el) {
-                        const event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
-                        el.dispatchEvent(event);
-                        return true;
-                    }
-                    return false;
-                }, selector) },
+
+            { name: 'JavaScript Click', fn: () => locator.evaluate((el: HTMLElement) => {
+                    el.click();
+                    el.dispatchEvent(new Event('click', { bubbles: true }));
+                })
+            },
+
+            { name: 'Dispatch Click', fn: () => locator.evaluate((el: HTMLElement) => {
+                    const event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
+                    el.dispatchEvent(event);
+                })
+            },
+
             { name: 'Check Click', fn: () => locator.check({ force: true, timeout: options.timeout }) },
+
             { name: 'Hover + Click', fn: async () => {
                     await locator.hover();
                     await this.page.waitForTimeout(200);
                     return locator.click({ timeout: options.timeout });
-                }},
-            { name: 'Keyboard Enter', fn: () => this.page.evaluate((sel) => {
-                    const el = document.querySelector(sel) as HTMLElement;
-                    if (el) {
-                        const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
-                        el.dispatchEvent(event);
-                        return true;
-                    }
-                    return false;
-                }, selector) }
+                }
+            },
+
+            { name: 'Keyboard Enter', fn: () => locator.evaluate((el: HTMLElement) => {
+                    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+                    el.dispatchEvent(event);
+                })
+            }
         ];
 
         for (const method of methods) {
             try {
                 this.log(`   [${methods.indexOf(method) + 1}/${methods.length}] ${method.name} deneniyor...`);
-                const result = await method.fn();
-                if (result !== false) {
-                    this.log(`   ✓ ${method.name} başarılı`);
-                    return true;
-                }
+                await method.fn();
+                this.log(`   ✓ ${method.name} başarılı`);
+                return true;
             } catch (error: any) {
                 this.log(`   ✗ ${method.name} başarısız: ${error.message?.substring(0, 50)}`);
             }
@@ -409,53 +489,37 @@ export class ClickUtils {
 
         return false;
     }
-
     // ============================================
     // HIGHLIGHT METHODLARI
     // ============================================
 
     private async highlightElement(locator: Locator): Promise<void> {
         try {
-            const selector = await this.getSelectorFromLocator(locator);
-            await this.page.evaluate((sel) => {
-                const el = document.querySelector(sel) as HTMLElement;
-                if (el) {
-                    const originalStyle = el.getAttribute('style');
-                    el.setAttribute('style',
-                        'border: 3px solid #FF6B6B !important; ' +
-                        'background-color: #FFE66D !important; ' +
-                        'box-shadow: 0 0 20px rgba(255, 107, 107, 0.5) !important; ' +
-                        'transition: all 0.2s !important;'
-                    );
-                    // @ts-ignore - Store original style for later
-                    el._originalStyle = originalStyle;
-                }
-            }, selector);
-            await this.page.waitForTimeout(CONFIG.HIGHLIGHT_DURATION);
+            await locator.evaluate((el, duration) => {
+                const originalStyle = el.getAttribute('style');
+                el.setAttribute('style',
+                    'border: 3px solid #FF6B6B !important; ' +
+                    'background-color: #FFE66D !important; ' +
+                    'box-shadow: 0 0 20px rgba(255, 107, 107, 0.5) !important; ' +
+                    'transition: all 0.2s !important;'
+                );
+                setTimeout(() => {
+                    if (originalStyle !== null) {
+                        el.setAttribute('style', originalStyle);
+                    } else {
+                        el.removeAttribute('style');
+                    }
+                }, duration);
+            }, CONFIG.HIGHLIGHT_DURATION);
+
+            // Bu bekleme olmasın, direkt tıklamaya geçsin ki testler hızlansın
+            // await this.page.waitForTimeout(CONFIG.HIGHLIGHT_DURATION);
+
         } catch (error: any) {
             // Silent fail
         }
     }
 
-    private async unhighlightElement(locator: Locator): Promise<void> {
-        try {
-            const selector = await this.getSelectorFromLocator(locator);
-            await this.page.evaluate((sel) => {
-                const el = document.querySelector(sel) as HTMLElement;
-                if (el) {
-                    // @ts-ignore
-                    const originalStyle = el._originalStyle;
-                    if (originalStyle !== undefined) {
-                        el.setAttribute('style', originalStyle);
-                    } else {
-                        el.removeAttribute('style');
-                    }
-                }
-            }, selector);
-        } catch (error: any) {
-            // Silent fail
-        }
-    }
 
     // ============================================
     // WAIT METHODLARI

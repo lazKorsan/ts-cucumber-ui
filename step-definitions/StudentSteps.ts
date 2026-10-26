@@ -4,7 +4,7 @@ import {expect} from '@playwright/test';
 import {HomePage} from '../pages/HomePage';
 import {Config} from '../utils/config';
 import ReasubleMethods from "../utils/ReasubleMethods";
-import {ClickUtils, createClickUtils} from "../utils/clickUtils";
+import {ClickUtils, createClickUtils} from "../utils/ClickUtils";
 import {SendKeysUtils} from "../utils/SendKeysUtils";
 import {LoggerHelper} from "../utils/LoggerHelper";
 import {VerifyElements} from "../utils/VerifyElements";
