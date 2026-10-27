@@ -96,6 +96,8 @@ Given(/^Mars kullanicisi "([^"]*)" ismi ve "([^"]*)" sifresi ile kayit olusturur
 
     const marsPage = new MarsPage(this.page);
 
+    await ClickUtils.clickByName(this.page, "Register");
+
     // 1. Mail Box
     // Not: SendKeysUtils veya getElementByName asenkron ise await eklenmelidir.
 
@@ -149,6 +151,37 @@ Given(/^Mars kullanicisi "([^"]*)" ismi ve "([^"]*)" sifresi ile kayit olusturur
 
     AccountStorageHelper.saveAccount(dynamicEmail, password, name);
 
+
+
+});
+Given(/^Mars kullanicisi bazi testler yapar$/, async function () {
+
+    // sayfayı goster
+    const marsPage = new MarsPage(this.page);
+
+    // CoursesButton
+    await ClickUtils.clickByName(this.page, "Courses");
+
+    await this.page.waitForTimeout(500);
+
+    // Filter Items Button
+    await this.page.getByRole('button', { name: 'Filter items' });
+    const scrollerElement = await this.page.getByRole('button', { name: 'Filter items' });
+    await scrollerElement.scrollIntoViewIfNeeded();
+    LoggerHelper.logInfo("Scroll1 basarılı")
+
+    await this.page.getByRole('button', { name: 'Join' }).scrollIntoViewIfNeeded();
+
+   // await ClickUtils.clickByName(this.page, "'Filter items");
+    LoggerHelper.logInfo("Scroll2 basarılı")
+
+    // start learning buton
+    await ClickUtils.clickByName(this.page, "Start Learning");
+
+
+
+    ReasubleMethods.verifyUrl(this.page, "login")
+    LoggerHelper.logInfo("Kullanici login sayfasindadir")
 
 
 });

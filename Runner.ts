@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 
 // Çalıştırmak istediğin tag'i buraya yazabilirsin
 // İstersen boş bırakıp tüm testleri çalıştırabilirsin
-const tagName = '@US002MarsgetEnumListTC02';
+const tagName = '@ClickByName';
 
 // CMD'de çalışacak olan komut
 // Windows kullandığın için tırnak işaretlerine (escape) dikkat ediyoruz

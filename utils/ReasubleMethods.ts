@@ -104,6 +104,76 @@ class ReasubleMethods {
         console.warn(`[WARN] [${new Date().toISOString()}] - ${message}`);
     }
 
+    /**
+     * Belirtilen element ismine sırasıyla Role, Text, Filter(hasText) ve XPath yöntemleriyle tıklamayı dener.
+     * @param page Playwright Page nesnesi
+     * @param elementName Tıklanacak elementin üzerindeki metin/isim
+     */
+    static async clickByName(page: Page, elementName: string): Promise<void> {
+        if (!page) {
+            this.logError("clickByName metoduna 'page' nesnesi gönderilmedi!");
+            throw new Error("[HATA] ReasubleMethods.clickByName metoduna 'page' nesnesi gönderilmedi!");
+        }
+
+        const timeoutConfig = { timeout: 2000 }; // Her locator için maksimum 2 saniye deneme süresi
+        this.logInfo(`'${elementName}' elementi için dinamik arama ve tıklama işlemi başlatıldı...`);
+
+        // 1. İhtimal: getByRole (En yaygın element tiplerini tarar)
+        const roles: Array<'button' | 'link' | 'heading' | 'tab'> = ['button', 'link', 'heading', 'tab'];
+        for (const role of roles) {
+            try {
+                const locator = page.getByRole(role, { name: elementName, exact: false });
+                if (await locator.first().isVisible()) {
+                    await locator.first().click(timeoutConfig);
+                    this.logInfo(`[BAŞARILI] '${elementName}' elementi getByRole('${role}') ile bulundu ve tıklandı.`);
+                    return;
+                }
+            } catch (e) {
+                // Görünür değilse veya tıklanamadıysa bir sonraki role geç
+            }
+        }
+
+        // 2. İhtimal: getByText
+        try {
+            const locator = page.getByText(elementName, { exact: false });
+            if (await locator.first().isVisible()) {
+                await locator.first().click(timeoutConfig);
+                this.logInfo(`[BAŞARILI] '${elementName}' elementi getByText() ile bulundu ve tıklandı.`);
+                return;
+            }
+        } catch (e) {}
+
+        // 3. İhtimal: filter({ hasText })
+        try {
+            const locator = page.locator('*').filter({ hasText: elementName });
+            if (await locator.first().isVisible()) {
+                await locator.first().click(timeoutConfig);
+                this.logInfo(`[BAŞARILI] '${elementName}' elementi filter({ hasText }) ile bulundu ve tıklandı.`);
+                return;
+            }
+        } catch (e) {}
+
+        // 4. İhtimal: XPath ile normalize-space
+        try {
+            const xpathSelector = `//*[normalize-space(text())='${elementName}' or contains(normalize-space(text()), '${elementName}')]`;
+            const locator = page.locator(xpathSelector);
+            if (await locator.first().isVisible()) {
+                await locator.first().click(timeoutConfig);
+                this.logInfo(`[BAŞARILI] '${elementName}' elementi XPath yardımıyla bulundu ve tıklandı.`);
+                return;
+            }
+        } catch (e) {}
+
+        // Eğer hiçbir locator yöntemi başarılı olamadıysa hata fırlatır ve log basar
+        const errorMessage = `'${elementName}' isimli element getByRole, getByText, hasText veya XPath yöntemlerinin hiçbiriyle bulunamadı veya tıklanamadı!`;
+        this.logError(errorMessage);
+        throw new Error(`❌ HATA: ${errorMessage}`);
+    }
+
+
+
+
+
 }
 
 export default ReasubleMethods

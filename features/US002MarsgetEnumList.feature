@@ -15,6 +15,6 @@ Feature: sendKeyUtils projeye dahil etmekliklik
   @US002MarsgetEnumListTC02
   Scenario: Mars kullanicisi enumList cekme islemlerine devam eder
     * Mars kullanicisi ana sayfaya gider
-    * Mars kullanicisi "Register" butona tiklar
+   # * Mars kullanicisi "Register" butona tiklar
     * Mars kullanicisi "ahmet" ismi ve "Query.2026!" sifresi ile kayit olusturur
 
