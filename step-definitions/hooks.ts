@@ -11,25 +11,18 @@ let context: BrowserContext;
 BeforeAll(async function () {
     browser = await chromium.launch({
         headless: false,
+        timeout: 60000,
         args: [
-            '--start-maximized',
-            '--remote-allow-origins=*',
-            '--disable-notifications',
-            '--disable-popup-blocking',
-            '--disable-dev-shm-usage',
-            '--no-sandbox',
-            '--disable-extensions',
-            '--disable-blink-features=AutomationControlled',
-            '--force-device-scale-factor=1.0',
-            '--disable-search-engine-choice-screen'
+            //'--start-maximized',
+            '--force-device-scale-factor=1',
         ]
     });
+
 
     context = await browser.newContext({
         viewport: null
     });
 });
-
 
 
 
@@ -48,19 +41,17 @@ Before(async function (scenario) {
                 '--disable-blink-features=AutomationControlled', // Otomasyon uyarısını gizler
                 '--force-device-scale-factor=1.0',        // Ekran ölçeğini %100 yapar
                 '--disable-search-engine-choice-screen',   // Chrome arama motoru seçim ekranını kapatır
-                '--disable-features=Translate', // Çeviri özelliğini tamamen devre dışı bırakır
-                '--lang=tr-TR'
+               // '--disable-features=Translate', // Çeviri özelliğini tamamen devre dışı bırakır
+               // '--lang=tr-TR'
             ]
         });
     }
 
     // 2. Her Ebat/Ekran Çözünürlüğünde Birebir Aynı Olması İçin:
     this.context = await browser.newContext({
-        viewport: null,
-        locale: 'tr-TR', // Tarayıcı locale ayarını Türkçe yapar
-        extraHTTPHeaders: {
-            'Accept-Language': 'tr-TR,tr;q=0.9' // HTTP isteklerindeki dil tercihini Türkçe yapar
-        }
+        viewport: { width: 1920, height: 1080 },
+        deviceScaleFactor: 1,
+
     });
 
     this.page = await this.context.newPage();
